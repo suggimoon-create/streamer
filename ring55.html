@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live School Timetable & Automated Bell</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-top: 0;
+        }
+        .live-panel {
+            display: flex;
+            justify-content: space-between;
+            background: #eef2f7;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        #clock {
+            color: #e74c3c;
+        }
+        #current-status {
+            color: #27ae60;
+        }
+        .system-controls {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        .btn-test {
+            background-color: #e67e22;
+        }
+        .btn-test:hover {
+            background-color: #d35400;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #34495e;
+            color: white;
+        }
+        .active-row {
+            background-color: #d5f5e3 !important;
+            font-weight: bold;
+        }
+        .bell-badge {
+            background-color: #e74c3c;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🔔 Live School Bell & Timetable</h1>
+    
+    <div class="system-controls">
+        <!-- Browsers require a user gesture to allow audio playback -->
+        <button class="btn" id="init-audio-btn">Activate Audio Engine</button>
+        <button class="btn btn-test" id="test-bell-btn">Manual Ring Test</button>
+    </div>
+
+    <div class="live-panel">
+        <div>Current Time: <span id="clock">00:00:00</span></div>
+        <div>Status: <span id="current-status">Initializing...</span></div>
+    </div>
+
+    <h2>Today's Bell Schedule</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Period</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Type</th>
+            </tr>
+        </thead>
+        <tbody id="timetable-body">
+            <!-- Row items will be generated dynamically -->
+        </tbody>
+    </table>
+</div>
+
+<!-- Streaming free public domain school bell audio track -->
+<audio id="bell-audio" src="https://github.com/suggimoon-create/streamer/bell.mp3" preload="auto"></audio>
+
+<script>
+    // 1. Define your school timetable schedule here (24-hour format "HH:MM")
+    const schedule = [
+        { name: "Period 1", start: "08:30", end: "09:15" },
+        { name: "Period 2", start: "09:20", end: "10:05" },
+        { name: "Recess Break", start: "10:05", end: "10:25" },
+        { name: "Period 3", start: "10:25", end: "11:10" },
+        { name: "Period 4", start: "11:15", end: "12:00" },
+        { name: "Lunch Break", start: "12:00", end: "13:00" },
+        { name: "Period 5", start: "13:00", end: "13:45" },
+        { name: "Period 6", start: "16:08", end: "18:58" }
+    ];
+	//const bell = new Audio('bell.mp3');
+    const bellAudio = document.getElementById('bell-audio');
+    let audioActivated = false;
+    let lastRungTime = ""; // Prevents multiple rings within the same minute
+
+    // 2. Render timetable UI
+    const tbody = document.getElementById('timetable-body');
+    schedule.forEach((item, index) => {
+        const row = document.createElement('tr');
+        row.id = `row-${index}`;
+        row.innerHTML = `
+            <td>${item.name}</td>
+            <td>${item.start} <span class="bell-badge">🔔</span></td>
+            <td>${item.end} <span class="bell-badge">🔔</span></td>
+            <td>${item.name.includes('Break') ? 'Break' : 'Class'}</td>
+        `;
+        tbody.appendChild(row);
+    });
+
+    // 3. Audio unlock restrictions handler
+    document.getElementById('init-audio-btn').addEventListener('click', function() {
+        alert("bell11");
+		bellAudio.play().then(() => {
+            alert("bell22");
+			bellAudio.pause();
+            bellAudio.currentTime = 0;
+            audioActivated = true;
+			
+            this.textContent = "Audio Engine Active ✅";
+            this.style.backgroundColor = "#27ae60";
+        }).catch(err => console.log("Audio unlock failed: ", err));
+    });
+
+    document.getElementById('test-bell-btn').addEventListener('click', () => {
+        //alert("trigger");
+		triggerBell();
+    });
+
+    function triggerBell() {
+        bellAudio.currentTime = 0;
+		//alert("activate");
+        bellAudio.play().catch(e => alert("Please click 'Activate Audio Engine' first to allow web audio playback!"));
+    }
+
+    // 4. Live Tracking Engine Loop
+    function updateClock() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        
+        const currentTimeString = `${hours}:${minutes}:${seconds}`;
+        const matchTimeString = `${hours}:${minutes}`;
+        
+        document.getElementById('clock').textContent = currentTimeString;
+
+        let currentActivity = "Out of School Hours / Free Time";
+        let activeFound = false;
+
+        schedule.forEach((item, index) => {
+            const row = document.getElementById(`row-${index}`);
+            
+            // Check if current system time falls inside this period window
+            if (matchTimeString >= item.start && matchTimeString < item.end) {
+                row.classList.add('active-row');
+                currentActivity = `Currently in ${item.name}`;
+                activeFound = true;
+            } else {
+                row.classList.remove('active-row');
+            }
+
+            // Check if exact minute matches a bell event time
+            if ((matchTimeString === item.start || matchTimeString === item.end) && seconds === "00") {
+                if (lastRungTime !== currentTimeString) {
+                    lastRungTime = currentTimeString;
+                    triggerBell();
+                }
+            }
+        });
+
+        document.getElementById('current-status').textContent = currentActivity;
+    }
+
+    // Run clock updates every second
+    setInterval(updateClock, 1000);
+    updateClock();
+</script>
+
+</body>
+</html>
