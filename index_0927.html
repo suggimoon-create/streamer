@@ -477,11 +477,14 @@
                 const offset = circumference * (1 - ratio);
                 progressBar.style.strokeDashoffset = offset;
 
+
             } else if (nextIdx !== -1) {
+
                 // 일정 시작 전이거나 교시 사이 대기 상태일 때
                 const nextPeriod = timetableData[nextIdx];
-//                headerTitle.textContent = "대기 중";
-                statusText.textContent = `${nextPeriod.name} 시작까지`;
+                headerTitle.textContent = "휴식";
+
+                //statusText.textContent = `${nextPeriod.name} 시작까지`;
 
                 const nextStartSec = timeToMinutes(nextPeriod.start) * 60;
                 const remaining = nextStartSec - totalCurrentSeconds;
