@@ -27,7 +27,8 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f5f7fb;
+/*            background-color: #f5f7fb;*/
+			background-color: transparent;
             color: #333;
             margin: 0;
             padding: 0px;
@@ -54,6 +55,19 @@
             text-align: left;
 
 			
+        }
+        .main-content {
+            flex: 1;
+			background-color: transparent;
+/*            background: var(--card-bg);*/
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
         }
 
         .header {
@@ -254,12 +268,11 @@
                 <!--div id="status-text" class="status-label">다음 벨까지</div-->
             </span>
         </div>
-
-
-
-
-
     </div>
+<!--     <div class="main-content"> -->
+<!-- 	</div> -->
+
+
     <!-- 벨소리 시스템 제어 -->
 <!--     <div class="controls"> -->
 <!--          <h2>🔔 시스템 설정</h2> -->
