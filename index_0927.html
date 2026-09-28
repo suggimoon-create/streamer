@@ -420,6 +420,7 @@
             const currentSeconds = now.getSeconds();
             const totalCurrentSeconds = currentMinutes * 60 + currentSeconds;
 
+			let beforeIdx = -1;
             let currentIdx = -1;
             let nextIdx = -1;
 
@@ -439,7 +440,8 @@
                 for (let i = 0; i < timetableData.length; i++) {
                     const startSec = timeToMinutes(timetableData[i].start) * 60;
                     if (totalCurrentSeconds < startSec) {
-                        nextIdx = i;
+                        beforeIdx = i - 1;
+						nextIdx = i;
                         break;
                     }
                 }
@@ -458,7 +460,13 @@
                 const period = timetableData[currentIdx];
                 document.getElementById(`period-${currentIdx}`).classList.add('active');
                 
-                headerTitle.textContent = period.name;
+				if (period.name.replace == "점심")
+				{
+				} else {
+	
+                headerTitle.textContent = period.name.replace(/^0+/, '') + "교시";
+				}
+
                 //statusText.textContent = "종료 벨까지";
 
                 const startSec = timeToMinutes(period.start) * 60;
@@ -481,20 +489,29 @@
             } else if (nextIdx !== -1) {
 
                 // 일정 시작 전이거나 교시 사이 대기 상태일 때
+				const beforePeriod = timetableData[beforeIdx];
                 const nextPeriod = timetableData[nextIdx];
-                headerTitle.textContent = "휴식";
+                headerTitle.textContent = "휴식시간";
 
                 //statusText.textContent = `${nextPeriod.name} 시작까지`;
 
-                const nextStartSec = timeToMinutes(nextPeriod.start) * 60;
-                const remaining = nextStartSec - totalCurrentSeconds;
+                const nextEndSec = timeToMinutes(nextPeriod.start) * 60;
+				const nextStartSec = timeToMinutes(beforePeriod.end) * 60;
+				const totalDuration = nextEndSec - nextStartSec;
+                const elapsed = totalCurrentSeconds - nextStartSec;
+				const remaining = nextEndSec - totalCurrentSeconds;
+
 
                 const remMin = Math.floor(remaining / 60);
                 const remSec = remaining % 60;
                 timeDisplay.textContent = `${String(remMin).padStart(2, '0')}:${String(remSec).padStart(2, '0')}`;
 
                 // 대기 상태일 때는 바를 채워둠
-                progressBar.style.strokeDashoffset = 0;
+                //progressBar.style.strokeDashoffset = 0;
+				// 원형 프로그레스 바 업데이트
+                const ratio = elapsed / totalDuration;
+                const offset = circumference * (1 - ratio);
+                progressBar.style.strokeDashoffset = offset;
             } else {
                 // 모든 일과가 끝났을 때
 //                headerTitle.textContent = "일과 종료";
