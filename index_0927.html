@@ -81,7 +81,11 @@
             border-bottom: 2px solid var(--border-color);
             padding-bottom: 5px;
         }	
-
+	    .clock-container1 {
+            text-align: center;
+            margin-bottom: 4px;
+            padding-bottom: 0px;
+        }
 
         #digital-clock {
             font-size: 1.5rem;
@@ -243,12 +247,12 @@
 <!-- <button style="display: none;" id="myButton" onclick="initAudio()">hidden</button> -->
 
 	<div class="widget-container">
-        <div class="clock-container">
+        <div class="clock-container1">
 			
-<!-- 				<span id="digital-clock">00:00:00</span> -->
 				<span id="today-date">Loading Date...</span>
-
-
+        </div>
+        <div class="clock-container">
+				<span id="digital-clock">00:00:00</span>
         </div>
         <div id="timetable-list" class="timetable">
             <!-- 타임라인 항목들이 자바스크립트로 주입됩니다 -->
@@ -386,17 +390,19 @@
 
         function initTimetable() {
             const listContainer = document.getElementById("timetable-list");
-//            const hours = String(now.getHours()).padStart(0, '0');
-//            const minutes = String(now.getMinutes()).padStart(0, '0');
-//            const seconds = String(now.getSeconds()).padStart(0, '0');
-//            document.getElementById('digital-clock').textContent = `${hours}:${minutes}:${seconds}`;
+			const today = new Date();
+           
+			const hours = String(today.getHours()).padStart(0, '0');
+            const minutes = String(today.getMinutes()).padStart(0, '0');
+            const seconds = String(today.getSeconds()).padStart(0, '0');
+            const dateE0 = document.getElementById('digital-clock').textContent = `${hours}:${minutes}:${seconds}`;
 			
 			const dateEl = document.getElementById("today-date");
             const days = ['일', '월', '화', '수', '목', '금', '토'];
 		
 			//const day = String(d.getDate()).padStart(2, '0');
             // 날짜 표시
-            const today = new Date();
+
             dateEl.textContent = `${today.getFullYear()}. ${String(today.getMonth() + 1).padStart(2, '0')}. ${String(today.getDate()).padStart(2, '0')}(${days[new Date().getDay()]})`;
 
             // 시간표 뷰 생성
