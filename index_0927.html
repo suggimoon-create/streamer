@@ -238,16 +238,34 @@
             color: #94a3b8;
         }
 
+        .btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
 /*        .timetable-item.active .period-time {*/
 /*            color: #3b82f6;*/
 /*        }*/
     </style>
 </head>
-<body onclick="initAudio()">
+<body>
+<!--button id="myButton" style="display: none;">button</button-->
+<!--button id="myButton">button</button-->
 
+<audio id="bell-audio" src="https://suggimoon-create.github.io/streamer/bell.mp3" type="audio/mp3" preload="auto"></audio>
 
+    
 	<div class="widget-container">
-        <div class="clock-container1">     
+        <div class="clock-container1">
+			
+		<button id="init-audio-btn">Activate Audio</button>
+        </div>
+        <div class="clock-container1">
 			
 				<span id="today-date">Loading Date...</span>
         </div>
@@ -260,81 +278,22 @@
 		
         <div class="timer-container">
 		
-            <!--svg class="circle-svg" viewBox="0 0 100 100-->
 			<svg class="circle-svg"  viewBox="0 0 100 100">
                 <circle class="circle-bg" cx="50" cy="50" r="45"></circle>
                 <circle id="progress-bar" class="circle-progress" cx="50" cy="50" r="45"></circle>
             </svg>
 		
-			<!--h2 id="current-period"></h2-->
             <span class="countdown-text">
 				<span id="current-period" class="time-left-p">00</span>
                 <span id="time-display" class="time-left">00:00</span>
-                <!--div id="status-text" class="status-label">다음 벨까지</div-->
             </span>
         </div>
     </div>
-<!--     <div class="main-content"> -->
-<!-- 	</div> -->
 
 
-    <!-- 벨소리 시스템 제어 -->
-<!--     <div class="controls"> -->
-<!--          <h2>🔔 시스템 설정</h2> -->
-<!--          <div class="status" id="system-status">시스템 상태: 대기 중 (브라우저 오디오 권한 필요)</div>  -->
-<!--         <button onclick="initAudio()">오디오 시스템 활성화 및 테스트 벨소리 재생</button> -->
-<!--     </div> -->
 
     <script>
-//		window.addEventListener('DOMContentLoaded', () => {
-//		  const hiddenBtn = document.getElementById('myButton'); // 버튼 ID 입력
-//
-//		  if (hiddenBtn) {
-//			hiddenBtn.click();
-//		  }
-//		});
-        // 실제 운영 시 오디오 파일 경로를 입력하세요 (예: 'bell.mp3')
-        // 현재는 브라우저 내장 주파수(Oscillator)를 사용하여 가상 벨소리를 냅니다.
-        let audioCtx = null;
-
-        function initAudio() {
-			
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-//            document.getElementById('system-status').innerText = "시스템 상태: 실시간 타이머 작동 중";
-//            document.getElementById('system-status').style.color = "#2ecc71";
-            
-            // 테스트용 벨소리 즉시 재생
-
-            playBell();
-        }
-
-        // 딩동댕 느낌의 가상 전자 벨소리 생성 함수
-        function playBell() {
-            if (!audioCtx) return;
-
-            const now = audioCtx.currentTime;
-            
-            // 4개 음계 연속 재생 (도-미-솔-도 효과)
-            const notes = [523.25, 659.25, 783.99, 1046.50]; 
-            notes.forEach((freq, index) => {
-                const osc = audioCtx.createOscillator();
-                const gainNode = audioCtx.createGain();
-                
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(freq, now + (index * 0.4));
-                
-                gainNode.gain.setValueAtTime(0.3, now + (index * 0.4));
-                gainNode.gain.exponentialRampToValueAtTime(0.001, now + (index * 0.4) + 0.5);
-                
-                osc.connect(gainNode);
-                gainNode.connect(audioCtx.destination);
-                
-                osc.start(now + (index * 0.4));
-                osc.stop(now + (index * 0.4) + 0.5);
-            });
-        }
+		
 
         // 시간표 종소리 스케줄러 (매 분마다 체크)
         const bellSchedules = [
@@ -354,6 +313,10 @@
 //            "22:13", "23:20" // 10교시 시작/종료
         ];
 
+		const bellAudio = document.getElementById('bell-audio');
+		let audioActivated = false;
+		let lastRungTime = ""; // Prevents multiple rings within the same minute
+
         setInterval(() => {
             const now = new Date();
             const currentTImeStr = 
@@ -362,10 +325,41 @@
             
             // 현재 시간이 설정된 교시 전후 시간에 포함되면 종을 울림
             if (bellSchedules.includes(currentTImeStr) && now.getSeconds() === 0) {
-                playBell();
+                triggerBell();
             }
         }, 1000);
 
+//		setTimeout(function() {
+//			document.getElementById("init-audio-btn").click();
+//		}, 3000);
+
+		
+
+        // 실제 운영 시 오디오 파일 경로를 입력하세요 (예: 'bell.mp3')
+        // 현재는 브라우저 내장 주파수(Oscillator)를 사용하여 가상 벨소리를 냅니다.
+
+		document.getElementById('init-audio-btn').addEventListener('click', function() {
+		
+		
+		// 테스트용 벨소리 즉시 재생
+		//triggerBell();
+
+		this.audioActivated = true;
+		bellAudio.play().then(() => {
+			bellAudio.pause();
+			bellAudio.currentTime = 0;
+			this.audioActivated = true;
+			
+			this.textContent = "Audio Engine Active ✅";
+		}).catch(err => console.log("Audio unlock failed: ", err));
+		});
+      
+
+		function triggerBell() {
+			bellAudio.currentTime = 0;
+
+			bellAudio.play().catch(e => alert("Please click 'Activate Audio Engine' first to allow web audio playback!"));
+		}
 
 		// 시간표 데이터 설정 (시작 시간, 종료 시간)
         const timetableData = [
@@ -376,7 +370,7 @@
             { name: "05", start: "11:30", end: "12:30", min: '60"'  },
             { name: "MB", start: "12:30", end: "13:30", min: '60"'  },
 			{ name: "06", start: "13:30", end: "15:00", min: '90"'  },
-            { name: "07", start: "15:15", end: "16:45", min: '90"'  }  
+            { name: "07", start: "15:15", end: "16:45", min: '90"'  }
 //            { name: "06", start: "13:30", end: "14:20", min: '50"'  },
 //            { name: "07", start: "14:30", end: "15:45", min: '90"'  },
 //            { name: "08", start: "16:00", end: "17:30", min: '90"'  },
@@ -400,7 +394,6 @@
 			const dateEl = document.getElementById("today-date");
             const days = ['일', '월', '화', '수', '목', '금', '토'];
 		
-			//const day = String(d.getDate()).padStart(2, '0');
             // 날짜 표시
 
             dateEl.textContent = `${today.getFullYear()}. ${String(today.getMonth() + 1).padStart(2, '0')}. ${String(today.getDate()).padStart(2, '0')}(${days[new Date().getDay()]})`;
@@ -532,6 +525,8 @@
         initTimetable();
         updateWidget();
         setInterval(updateWidget, 1000);
+
+
     </script>
 </body>
 </html>
