@@ -466,9 +466,9 @@
                 const period = timetableData[currentIdx];
                 document.getElementById(`period-${currentIdx}`).classList.add('active');
                 
-				if (period.name.replace == "MB")
+				if (period.name == "MB")
 				{
-					headerTitle.textContent = period.name + "점심시간";
+					headerTitle.textContent = "점심시간";
 				} else {
 	
                 headerTitle.textContent = period.name.replace(/^0+/, '') + "교시";
