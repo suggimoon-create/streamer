@@ -161,7 +161,7 @@
         .timer-container {
             position: relative;
             width: 150px;
-            height: 130px;
+            height: 120px;
 			justify-content: center;
         }
 
@@ -368,13 +368,13 @@
             { name: "03", start: "08:00", end: "09:30", min: '90"'  },
             { name: "04", start: "09:45", end: "11:15", min: '90"'  },
             { name: "05", start: "11:30", end: "12:30", min: '60"'  },
-            { name: "MB", start: "12:30", end: "13:30", min: '60"'  },
+            { name: "LL", start: "12:30", end: "13:30", min: '60"'  },
 //			{ name: "06", start: "13:30", end: "15:00", min: '90"'  },
 //            { name: "07", start: "15:15", end: "16:45", min: '90"'  }
             { name: "06", start: "13:30", end: "14:20", min: '50"'  },
             { name: "07", start: "14:30", end: "15:45", min: '90"'  },
             { name: "08", start: "16:00", end: "17:30", min: '90"'  },
-            { name: "MB", start: "17:30", end: "19:30", min: '120"'  },
+            { name: "DD", start: "17:30", end: "19:30", min: '120"'  },
             { name: "09", start: "19:30", end: "20:20", min: '50"'  },
             { name: "10", start: "20:30", end: "21:20", min: '50"'  }
         ];
@@ -459,9 +459,12 @@
                 const period = timetableData[currentIdx];
                 document.getElementById(`period-${currentIdx}`).classList.add('active');
                 
-				if (period.name == "MB")
+				if (period.name == "LL")
 				{
 					headerTitle.textContent = "점심시간";
+				} else if (period.name == "DD")
+				{
+					headerTitle.textContent = "저녁시간";
 				} else {
 	
                 headerTitle.textContent = period.name.replace(/^0+/, '') + "교시";
