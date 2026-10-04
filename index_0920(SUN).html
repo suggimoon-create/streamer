@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0920(SUN)</title>
+    <style>
+				:root {
+		  --bg-color: #fcf9f5;       /* 포근한 크림 아이보리 */
+		  --timeline-line: #e3dcd2;  /* 은은한 토프 베이지 선 */
+		  /*--accent-color: #c0a9bd;   /* 차분한 더스티 라벤더/로즈 포인트 */
+		  --accent-color: rgb(242,162,155); 
+		  --circle-empty: #e3dcd2;  
+		  --card-bg: #ffffff;        /* 깔끔한 화이트 카드 */
+		  --text-main: #4a443f;      /* 따뜻한 다크 브라운 텍스트 */
+		  --text-muted: #8c8279;     /* 소프트 브라운 서브 텍스트 */
+	      --border-color: #e5e5e5;
+		}
+        /* 아늑하고 포근한(Cozy) 무드의 폰트 및 배경 설정 */
+        @import url('https://googleapis.com');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+/*            background-color: #f5f7fb;*/
+			background-color: transparent;
+            color: #333;
+            margin: 0;
+            padding: 0px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .timeline-header {
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+
+        .widget-container {
+/*            background: #ffffff;*/
+			background-color: var(--bg-color);
+            border-radius: 12px;
+            box-shadow: 0 0px 0px rgba(0, 0, 0, 0);
+            padding: 0px;
+            max-width: 170px;
+            width: 100%;
+			height: 100%;
+            box-sizing: border-box;
+            text-align: left;
+
+			
+        }
+        .main-content {
+            flex: 1;
+			background-color: transparent;
+/*            background: var(--card-bg);*/
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+        }
+
+        .header {
+            margin-bottom: 0px;
+        }
+   
+	    .clock-container {
+            text-align: center;
+            margin-bottom: 13px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 5px;
+        }	
+	    .clock-container1 {
+            text-align: center;
+            margin-bottom: 4px;
+            padding-bottom: 0px;
+        }
+
+        #digital-clock {
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: var(--text-color);
+            text-shadow: 0 0 10px rgba(238, 187, 154, 0.3);
+        }
+
+        #today-date {
+			font-weight: bold;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-top: 1px;
+            color: #475569;
+        }
+
+        .header h2 {
+            margin: 0;
+            font-size: 1.25rem;
+            color: #1e293b;
+        }
+
+        .header p {
+            margin: 4px 0 0 0;
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+
+        .countdown-box {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .circle-svg {
+            transform: rotate(-90deg);
+            width: 100%;
+            height: 100%;
+/*            flex-shrink: 0;*/
+
+        }
+
+        .circle-bg {
+            fill: none;
+            stroke: #e2e8f0;
+            stroke-width: 8;
+        }
+
+        .circle-progress {
+            fill: none;
+            stroke: #93c5fd;
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 282.6;
+            stroke-dashoffset: 0;
+            transition: stroke-dashoffset 1s linear;
+        }
+
+        .countdown-text {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .timer-container {
+            position: relative;
+            width: 150px;
+            height: 120px;
+			justify-content: center;
+        }
+
+        .time-left-p {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #475569;
+            line-height: 1.1;
+            align-items: center;
+            display: flex;
+        }
+        .time-left {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #0f172a;
+            line-height: 1.1;
+            align-items: center;
+        }
+   
+        .status-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #2563eb;
+            margin-top: 4px;
+        }
+
+        .timetable {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 7px;
+            
+			margin-bottom: 13px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 5px;
+        }
+
+        .timetable-item {
+			font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0px 12px;
+            border-radius: 0px;
+            font-size: 0.9rem;
+            color: #475569;
+        }
+
+        .timetable-item.active {
+		    border-radius:5px;
+			font-weight: bold;
+            background-color: #93c5fd;
+            color: #1e40af;
+
+        }
+
+        .period-name {
+            font-variant-numeric: tabular-nums;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .period-time {
+            font-variant-numeric: tabular-nums;
+            color: #94a3b8;
+			
+        }
+
+        .period-min {
+            font-variant-numeric: tabular-nums;
+            color: #94a3b8;
+        }
+
+        .btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+/*        .timetable-item.active .period-time {*/
+/*            color: #3b82f6;*/
+/*        }*/
+    </style>
+</head>
+<body>
+<!--button id="myButton" style="display: none;">button</button-->
+<!--button id="myButton">button</button-->
+
+<audio id="bell-audio" src="https://suggimoon-create.github.io/streamer/bell.mp3" type="audio/mp3" preload="auto"></audio>
+
+    
+	<div class="widget-container">
+        <div class="clock-container1">
+			
+		<button id="init-audio-btn">Activate Audio</button>
+        </div>
+        <div class="clock-container1">
+			
+				<span id="today-date">Loading Date...</span>
+        </div>
+<!--         <div class="clock-container"> -->
+<!-- 				<span id="digital-clock">00:00:00</span> -->
+<!--         </div> -->
+        <div id="timetable-list" class="timetable">
+            <!-- 타임라인 항목들이 자바스크립트로 주입됩니다 -->
+        </div>
+		
+        <div class="timer-container">
+		
+			<svg class="circle-svg"  viewBox="0 0 100 100">
+                <circle class="circle-bg" cx="50" cy="50" r="45"></circle>
+                <circle id="progress-bar" class="circle-progress" cx="50" cy="50" r="45"></circle>
+            </svg>
+		
+            <span class="countdown-text">
+				<span id="current-period" class="time-left-p">00</span>
+                <span id="time-display" class="time-left">00:00</span>
+            </span>
+        </div>
+    </div>
+
+
+
+    <script>
+		
+
+        // 시간표 종소리 스케줄러 (매 분마다 체크)
+        const bellSchedules = [
+            "04:30", "06:00", // 1교시 시작/종료
+            "06:15", "07:45", // 2교시 시작/종료
+            "08:00", "09:30", // 3교시 시작/종료
+            "09:45", "11:15", // 4교시 시작/종료
+            "11:30", "12:30", // 5교시 시작/종료
+            "12:30", "13:30", // L교시 시작/종료
+			"13:30", "14:20", // 6교시 시작/종료
+            "14:30", "15:45", // 6교시 시작/종료
+            "16:00", "17:30", // 7교시 시작/종료
+            "17:30", "19:30", // D교시 시작/종료
+            "19:30", "20:20", // 9교시 시작/종료
+            "20:30", "21:20" // 10교시 시작/종료
+        ];
+
+		const bellAudio = document.getElementById('bell-audio');
+		let audioActivated = false;
+		let lastRungTime = ""; // Prevents multiple rings within the same minute
+
+        setInterval(() => {
+            const now = new Date();
+            const currentTImeStr = 
+                String(now.getHours()).padStart(2, '0') + ":" + 
+                String(now.getMinutes()).padStart(2, '0');
+            
+            // 현재 시간이 설정된 교시 전후 시간에 포함되면 종을 울림
+            if (bellSchedules.includes(currentTImeStr) && now.getSeconds() === 0) {
+                triggerBell();
+            }
+        }, 1000);
+
+//		setTimeout(function() {
+//			document.getElementById("init-audio-btn").click();
+//		}, 3000);
+
+		
+
+        // 실제 운영 시 오디오 파일 경로를 입력하세요 (예: 'bell.mp3')
+        // 현재는 브라우저 내장 주파수(Oscillator)를 사용하여 가상 벨소리를 냅니다.
+
+		document.getElementById('init-audio-btn').addEventListener('click', function() {
+		
+		
+		// 테스트용 벨소리 즉시 재생
+		//triggerBell();
+
+		this.audioActivated = true;
+		bellAudio.play().then(() => {
+			bellAudio.pause();
+			bellAudio.currentTime = 0;
+			this.audioActivated = true;
+			
+			this.textContent = "Audio Engine Active ✅";
+		}).catch(err => console.log("Audio unlock failed: ", err));
+		});
+      
+
+		function triggerBell() {
+			bellAudio.currentTime = 0;
+
+			bellAudio.play().catch(e => alert("Please click 'Activate Audio Engine' first to allow web audio playback!"));
+		}
+
+		// 시간표 데이터 설정 (시작 시간, 종료 시간)
+        const timetableData = [
+            { name: "01", start: "04:30", end: "06:00", min: '90"' },
+            { name: "02", start: "06:15", end: "07:45", min: '90"'  },
+            { name: "03", start: "08:00", end: "09:30", min: '90"'  },
+            { name: "04", start: "09:45", end: "11:15", min: '90"'  },
+            { name: "05", start: "11:30", end: "12:30", min: '60"'  },
+            { name: "LL", start: "12:30", end: "14:30", min: '120"'  },
+//			{ name: "06", start: "13:30", end: "15:00", min: '90"'  },
+//            { name: "07", start: "15:15", end: "16:45", min: '90"'  }
+//            { name: "06", start: "13:30", end: "14:20", min: '50"'  },
+            { name: "06", start: "14:30", end: "15:45", min: '75"'  },
+            { name: "07", start: "16:00", end: "17:30", min: '90"'  },
+            { name: "08", start: "17:40", end: "18:30", min: '50"'  },
+            { name: "DD", start: "18:30", end: "19:30", min: '60"'  },
+            { name: "09", start: "19:30", end: "20:20", min: '50"'  },
+            { name: "10", start: "20:30", end: "21:20", min: '50"'  }
+        ];
+
+        const r = 45;
+        const circumference = 2 * Math.PI * r; // 282.6
+
+        function initTimetable() {
+            const listContainer = document.getElementById("timetable-list");
+			const today = new Date();
+           
+			const hours = String(today.getHours()).padStart(2, '0');
+            const minutes = String(today.getMinutes()).padStart(2, '0');
+            const seconds = String(today.getSeconds()).padStart(2, '0');
+            //const dateE0 = document.getElementById('digital-clock').textContent = `${hours}:${minutes}:${seconds}`;
+			
+			const dateEl = document.getElementById("today-date");
+            const days = ['일', '월', '화', '수', '목', '금', '토'];
+		
+            // 날짜 표시
+
+            dateEl.textContent = `${today.getFullYear()}. ${String(today.getMonth() + 1).padStart(2, '0')}. ${String(today.getDate()).padStart(2, '0')}(${days[new Date().getDay()]})`;
+
+            // 시간표 뷰 생성
+            listContainer.innerHTML = timetableData.map((item, index) => `
+                <div class="timetable-item" id="period-${index}">
+                    <div class="period-name">${item.name}</div>
+                    <div class="period-time">${item.start} - ${item.end}</div>
+					<div class="period-min">${item.min}</div>
+                </div>
+            `).join('');
+        }
+
+        function timeToMinutes(timeStr) {
+            const [hrs, mins] = timeStr.split(':').map(Number);
+            return hrs * 60 + mins;
+        }
+
+        function updateWidget() {
+            const now = new Date();
+            const currentMinutes = now.getHours() * 60 + now.getMinutes();
+            const currentSeconds = now.getSeconds();
+            const totalCurrentSeconds = currentMinutes * 60 + currentSeconds;
+
+			let beforeIdx = -1;
+            let currentIdx = -1;
+            let nextIdx = -1;
+
+            // 현재 진행 중인 교시 확인
+            for (let i = 0; i < timetableData.length; i++) {
+                const startSec = timeToMinutes(timetableData[i].start) * 60;
+                const endSec = timeToMinutes(timetableData[i].end) * 60;
+
+                if (totalCurrentSeconds >= startSec && totalCurrentSeconds < endSec) {
+                    currentIdx = i;
+                    break;
+                }
+            }
+
+            // 만약 현재 진행 중인 교시가 없다면 다음 올 교시 찾기
+            if (currentIdx === -1) {
+                for (let i = 0; i < timetableData.length; i++) {
+                    const startSec = timeToMinutes(timetableData[i].start) * 60;
+                    if (totalCurrentSeconds < startSec) {
+                        beforeIdx = i - 1;
+						nextIdx = i;
+                        break;
+                    }
+                }
+            }
+
+            const headerTitle = document.getElementById("current-period");
+            const timeDisplay = document.getElementById("time-display");
+            const statusText = document.getElementById("status-text");
+            const progressBar = document.getElementById("progress-bar");
+
+            // 모든 하이라이트 초기화
+            document.querySelectorAll('.timetable-item').forEach(el => el.classList.remove('active'));
+
+            if (currentIdx !== -1) {
+                // 교시 진행 중일 때
+                const period = timetableData[currentIdx];
+                document.getElementById(`period-${currentIdx}`).classList.add('active');
+                
+				if (period.name == "LL")
+				{
+					headerTitle.textContent = "점심시간";
+				} else if (period.name == "DD")
+				{
+					headerTitle.textContent = "저녁시간";
+				} else {
+	
+                headerTitle.textContent = period.name.replace(/^0+/, '') + "교시";
+				}
+
+                //statusText.textContent = "종료 벨까지";
+
+                const startSec = timeToMinutes(period.start) * 60;
+                const endSec = timeToMinutes(period.end) * 60;
+                const totalDuration = endSec - startSec;
+                const elapsed = totalCurrentSeconds - startSec;
+                const remaining = endSec - totalCurrentSeconds;
+
+                // 시간 출력 포맷
+                const remMin = Math.floor(remaining / 60);
+                const remSec = remaining % 60;
+                timeDisplay.textContent = `${String(remMin).padStart(2, '0')}:${String(remSec).padStart(2, '0')}`;
+
+                // 원형 프로그레스 바 업데이트
+                const ratio = elapsed / totalDuration;
+                const offset = circumference * (1 - ratio);
+                progressBar.style.strokeDashoffset = offset;
+
+
+            } else if (nextIdx !== -1) {
+
+                // 일정 시작 전이거나 교시 사이 대기 상태일 때
+				const beforePeriod = timetableData[beforeIdx];
+                const nextPeriod = timetableData[nextIdx];
+                headerTitle.textContent = "휴식시간";
+
+                //statusText.textContent = `${nextPeriod.name} 시작까지`;
+
+                const nextEndSec = timeToMinutes(nextPeriod.start) * 60;
+				const nextStartSec = timeToMinutes(beforePeriod.end) * 60;
+				const totalDuration = nextEndSec - nextStartSec;
+                const elapsed = totalCurrentSeconds - nextStartSec;
+				const remaining = nextEndSec - totalCurrentSeconds;
+
+
+                const remMin = Math.floor(remaining / 60);
+                const remSec = remaining % 60;
+                timeDisplay.textContent = `${String(remMin).padStart(2, '0')}:${String(remSec).padStart(2, '0')}`;
+
+                // 대기 상태일 때는 바를 채워둠
+                //progressBar.style.strokeDashoffset = 0;
+				// 원형 프로그레스 바 업데이트
+                const ratio = elapsed / totalDuration;
+                const offset = circumference * (1 - ratio);
+                progressBar.style.strokeDashoffset = offset;
+            } else {
+                // 모든 일과가 끝났을 때
+//                headerTitle.textContent = "일과 종료";
+//                statusText.textContent = "오늘 일정이 끝났습니다";
+                timeDisplay.textContent = "00:00";
+                progressBar.style.strokeDashoffset = circumference;
+            }
+        }
+
+        // 초기화 및 실행
+        initTimetable();
+        updateWidget();
+        setInterval(updateWidget, 1000);
+
+
+    </script>
+</body>
+</html>
